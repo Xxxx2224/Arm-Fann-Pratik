@@ -11,18 +11,19 @@ typedef struct
 typedef struct{
  size_t output_count;
  char** output;
-}Fannsatir;
+}Fann_rows;
 
 typedef struct 
 {
 
-    Fannsatir* rows;
+    Fann_rows* rows;
 
     //kullanıcı manuel konfigrasyon
     size_t total_columns;
     size_t input_columns;
-    size_t output_column;
+    size_t output_columns;
     size_t total_rows;
+    size_t rows_alloc;
 
 }FannDataset;
 
@@ -43,16 +44,20 @@ FannError FannDataset_create(
                                 );
 
 
+FannError FannDataset_parse(char** const file_handle,
+                            char* end_ptr,
+                            unsigned int skip_row,
+                            const char ayrac
+                            );
+
 
 
 FannError FannDataset_parse_csv(
                                 FannDataset* FannDataset,
-                                const char* dosya_yolu,
-                                int skip_satir,
-                                char ayrac
+                                const char* const dosya_yolu,
+                                unsigned int skip_rows,
+                                const char ayrac
                                 );
-
-
 
 
 FannError FannDataset_OutData(
@@ -61,8 +66,7 @@ FannError FannDataset_OutData(
                               );
 
 
-
-void FannDataset_destroy(
+FannError FannDataset_destroy(
                         FannDataset** FannDataset
                         );
 
