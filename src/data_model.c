@@ -36,22 +36,26 @@ FannError FannDataset_create(
     dataset->total_rows = 0;
     dataset->rows_alloc = FANN_ROWS_ALLOC;
     
-    Fann_rows* rows = (Fann_rows*)calloc((dataset->rows_alloc), sizeof(Fann_rows));
+    Fann_rows* rows = (Fann_rows*)malloc(FANN_ROWS_ALLOC*sizeof(Fann_rows));
     if (rows == NULL)
     {
         free(dataset);
         perror(NULL);
         return FANN_ERR_ALLOC;
     }
-    
     dataset->rows = rows;
+    for (size_t i = 0; i < FANN_ROWS_ALLOC; i++)
+    {
+        dataset->rows[i].output = (char**)malloc(total_columns*sizeof(char*)); 
+    }
+    
     *fannDataset = dataset;
     
     return FANN_SUCCESS;
 }
 
-FannError FannDataset_parse_csv(FannDataset* fannDataset,const char* const file_path,unsigned int skip_rows,const char ayrac){
-    
+FannError FannDataset_parse_csv(FannDataset** fannxDataset,const char* const file_path,unsigned int skip_rows,const char ayrac){
+    FannDataset* fannDataset = *(fannxDataset);
     if (fannDataset==NULL ||
         file_path==NULL || file_path[0]=='\0' || 
         ayrac=='\0') 
@@ -89,28 +93,44 @@ FannError FannDataset_parse_csv(FannDataset* fannDataset,const char* const file_
     {
         perror(NULL);
         free(file_handle);
-        fclose(file);
+        fclose(file);                                                                       
         return FANN_ERR_IO;
     }
 
     file_handle[file_size] = '\0';
-    char* end_ptr = &file_handle[file_size];
+    char* end_ptr = &file_handle[file_size-1];
     fclose(file);
 
-    FannDataset_parse(&file_handle,file_size,skip_rows,ayrac);
+    FannDataset_parse(&fannDataset,&file_handle,end_ptr,skip_rows,ayrac);
 
     return FANN_SUCCESS;
 }
 
-FannError FannDataset_parse(char** const file_handle,char* end_ptr,unsigned int skip_rows,const char ayrac){
-    const char* const file = *(file_handle);
-
+FannError FannDataset_parse(FannDataset** fanndataset,char** const file_handle,char* end_ptr,unsigned int skip_rows,const char ayrac){
+    char* file = *(file_handle);
+    __uint64_t rows= 0;
+    __uint8_t colums = 0; 
+    FannDataset* fannDataset = *(fanndataset);
+    char* left_ptr = file;
     while (file<end_ptr)
     {
-        
-    }
-    
+        if (file==NULL)
+        {   
+            return FANN_ERR_ARG;
+        }
 
+        if (*file==ayrac)
+        {
+            *file='\0';
+            fannDataset->rows[rows].output[colums];
+            // while (left_ptr<file)
+            // {
+            // }
+            rows++;
+        }
+        file++;
+   }
+    
 }
 
 FannError FannDataset_destroy(FannDataset** fannDataset){

@@ -44,7 +44,8 @@ FannError FannDataset_create(
                                 );
 
 
-FannError FannDataset_parse(char** const file_handle,
+FannError FannDataset_parse(FannDataset** fannDataset,
+                            char** const file_handle,
                             char* end_ptr,
                             unsigned int skip_row,
                             const char ayrac
@@ -53,7 +54,7 @@ FannError FannDataset_parse(char** const file_handle,
 
 
 FannError FannDataset_parse_csv(
-                                FannDataset* FannDataset,
+                                FannDataset** FannDataset,
                                 const char* const dosya_yolu,
                                 unsigned int skip_rows,
                                 const char ayrac
@@ -70,5 +71,5 @@ FannError FannDataset_destroy(
                         FannDataset** FannDataset
                         );
 
-
+void print_raw_string_including_null(const char *str);
 #endif
